@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="Shortcut Icon" href="https://teanga.io/images/favicon.png">
     <title>Teanga.rs</title>
     <style>
         * {
@@ -12,48 +13,59 @@
         }
 
         :root {
-            /* Material Design 3 Colors */
-            --md-primary: #6750a4;
-            --md-primary-container: #eaddff;
-            --md-secondary: #625b71;
-            --md-secondary-container: #e8def8;
-            --md-tertiary: #7d5260;
-            --md-tertiary-container: #ffd8e4;
-            --md-error: #ba1a1a;
-            --md-error-container: #ffdad6;
-            --md-success: #006e1c;
-            --md-success-container: #9bf6a0;
-            --md-warning: #8a4f00;
-            --md-warning-container: #ffddb1;
-            --md-surface: #fef7ff;
-            --md-surface-variant: #e7e0ec;
-            --md-outline: #79747e;
-            --md-outline-variant: #cac4d0;
-            --md-background: #fef7ff;
-            --md-on-background: #1d1b20;
-            --md-on-surface: #1d1b20;
-            --md-on-surface-variant: #49454f;
-            --md-surface-container: #f3edf7;
-            --md-surface-container-high: #ede7f1;
-            --md-surface-container-highest: #e6e0e9;
+            /* Teanga Brand Colors - based on logo */
+            --teanga-teal: #2dd4bf;
+            --teanga-teal-dark: #0d9488;
+            --teanga-teal-light: #99f6e4;
+            --teanga-magenta: #ec4899;
+            --teanga-magenta-dark: #be185d;
+            --teanga-magenta-light: #fce7f3;
+            --teanga-orange: #fb923c;
+            --teanga-orange-dark: #ea580c;
+            --teanga-orange-light: #fed7aa;
+            
+            /* Updated Material Design Colors with Teanga palette */
+            --md-primary: var(--teanga-teal);
+            --md-primary-container: var(--teanga-teal-light);
+            --md-secondary: var(--teanga-magenta);
+            --md-secondary-container: var(--teanga-magenta-light);
+            --md-tertiary: var(--teanga-orange);
+            --md-tertiary-container: var(--teanga-orange-light);
+            --md-error: #dc2626;
+            --md-error-container: #fecaca;
+            --md-success: #059669;
+            --md-success-container: #a7f3d0;
+            --md-warning: #d97706;
+            --md-warning-container: #fde68a;
+            --md-surface: #fefefe;
+            --md-surface-variant: #f1f5f9;
+            --md-outline: #64748b;
+            --md-outline-variant: #cbd5e1;
+            --md-background: #ffffff;
+            --md-on-background: #1e293b;
+            --md-on-surface: #1e293b;
+            --md-on-surface-variant: #475569;
+            --md-surface-container: #f8fafc;
+            --md-surface-container-high: #f1f5f9;
+            --md-surface-container-highest: #e2e8f0;
 
-            /* POS Tag Colors */
-            --tag-noun: #2e7d32;
-            --tag-noun-bg: #e8f5e8;
-            --tag-verb: #d32f2f;
-            --tag-verb-bg: #ffebee;
-            --tag-adj: #1976d2;
-            --tag-adj-bg: #e3f2fd;
-            --tag-adv: #f57c00;
-            --tag-adv-bg: #fff3e0;
-            --tag-prep: #7b1fa2;
-            --tag-prep-bg: #f3e5f5;
-            --tag-det: #388e3c;
-            --tag-det-bg: #e8f5e8;
-            --tag-punct: #616161;
-            --tag-punct-bg: #f5f5f5;
-            --tag-default: #455a64;
-            --tag-default-bg: #eceff1;
+            /* POS Tag Colors - updated with brand palette */
+            --tag-noun: var(--teanga-teal-dark);
+            --tag-noun-bg: var(--teanga-teal-light);
+            --tag-verb: var(--teanga-magenta-dark);
+            --tag-verb-bg: var(--teanga-magenta-light);
+            --tag-adj: var(--teanga-orange-dark);
+            --tag-adj-bg: var(--teanga-orange-light);
+            --tag-adv: #7c3aed;
+            --tag-adv-bg: #ede9fe;
+            --tag-prep: #059669;
+            --tag-prep-bg: #d1fae5;
+            --tag-det: var(--teanga-teal);
+            --tag-det-bg: #ccfbf1;
+            --tag-punct: #6b7280;
+            --tag-punct-bg: #f3f4f6;
+            --tag-default: #374151;
+            --tag-default-bg: #f9fafb;
         }
 
         body {
@@ -65,37 +77,72 @@
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 95%;
+            min-width: 320px;
             margin: 0 auto;
             padding: 24px;
         }
 
+        @media (min-width: 1920px) {
+            .container {
+                max-width: 1800px;
+            }
+        }
+
         .header {
             text-align: center;
-            margin-bottom: 32px;
-            padding: 40px 32px;
+            margin-bottom: 24px;
+            padding: 24px 24px 20px 24px;
             background: var(--md-surface);
             border-radius: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(45, 212, 191, 0.1), 0 1px 3px rgba(0,0,0,0.1);
             border: 1px solid var(--md-outline-variant);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--teanga-teal) 0%, var(--teanga-magenta) 50%, var(--teanga-orange) 100%);
         }
 
         .header h1 {
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: 500;
-            color: var(--md-primary);
-            margin-bottom: 12px;
+            color: var(--teanga-teal);
+            margin-bottom: 16px;
         }
 
         .rust-badge {
-            display: inline-flex;
-            align-items: center;
-            background: var(--md-primary-container);
-            color: var(--md-primary);
-            padding: 12px 20px;
-            border-radius: 24px;
-            font-size: 0.875rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            background: var(--md-surface-container);
+            color: var(--md-on-surface);
+            padding: 16px 20px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 400;
+            border: 1px solid var(--md-outline-variant);
+            max-width: 700px;
+            margin: 0 auto;
+            text-align: left;
+            line-height: 1.4;
+        }
+
+        .rust-badge a {
+            color: var(--teanga-teal);
+            text-decoration: none;
             font-weight: 500;
+        }
+
+        .rust-badge a:hover {
+            text-decoration: underline;
         }
 
         .status-indicator {
@@ -114,8 +161,9 @@
             text-align: center;
             padding: 80px 20px;
             background: var(--md-surface);
-            border-radius: 16px;
+            border-radius: 24px;
             border: 1px solid var(--md-outline-variant);
+            box-shadow: 0 4px 20px rgba(45, 212, 191, 0.05);
         }
 
         .loading-spinner {
@@ -135,26 +183,34 @@
 
         .app-layout {
             display: grid;
-            grid-template-columns: 1fr 1fr 1.2fr;
+            grid-template-columns: 0.7fr 0.6fr 1.2fr;
             gap: 24px;
             margin-bottom: 24px;
         }
 
         .panel {
             background: var(--md-surface);
-            border-radius: 16px;
-            padding: 24px;
+            border-radius: 20px;
+            padding: 20px;
             border: 1px solid var(--md-outline-variant);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(45, 212, 191, 0.05), 0 1px 3px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            min-width: 0;
+        }
+
+        .panel:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(45, 212, 191, 0.1), 0 4px 6px rgba(0,0,0,0.1);
         }
 
         .panel h2 {
             margin: 0 0 24px 0;
-            color: var(--md-primary);
+            color: var(--teanga-teal);
             font-size: 1.25rem;
-            font-weight: 500;
+            font-weight: 600;
             padding-bottom: 12px;
-            border-bottom: 2px solid var(--md-primary-container);
+            border-bottom: 3px solid var(--teanga-teal);
         }
 
         .input-group {
@@ -164,7 +220,7 @@
         .input-group label {
             display: block;
             margin-bottom: 8px;
-            font-weight: 500;
+            font-weight: 600;
             color: var(--md-on-surface);
             font-size: 0.875rem;
         }
@@ -173,12 +229,12 @@
             width: 100%;
             padding: 16px;
             border: 2px solid var(--md-outline-variant);
-            border-radius: 12px;
+            border-radius: 16px;
             font-size: 14px;
             font-family: 'JetBrains Mono', 'Roboto Mono', monospace;
             background: var(--md-surface);
             color: var(--md-on-surface);
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
         }
 
         textarea::placeholder, input::placeholder {
@@ -188,27 +244,45 @@
         textarea:focus, input:focus, select:focus {
             outline: none;
             border-color: var(--md-primary);
-            box-shadow: 0 0 0 2px rgba(103, 80, 164, 0.2);
+            box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.2);
+            transform: translateY(-2px);
         }
 
         .btn {
-            background: var(--md-primary);
+            background: var(--teanga-teal);
             color: white;
             border: none;
             padding: 12px 20px;
             border-radius: 24px;
             cursor: pointer;
-            font-weight: 500;
+            font-weight: 600;
             font-size: 0.875rem;
             margin: 4px 8px 4px 0;
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(45, 212, 191, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
         }
 
         .btn:hover {
-            background: #5a3f95;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-            transform: translateY(-1px);
+            background: var(--teanga-teal-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(45, 212, 191, 0.4);
         }
 
         .btn:disabled {
@@ -218,38 +292,41 @@
         }
 
         .btn-secondary {
-            background: var(--md-secondary);
-            color: white;
+            background: linear-gradient(135deg, var(--teanga-magenta) 0%, var(--teanga-orange) 100%);
+            box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
         }
 
         .btn-secondary:hover {
-            background: #544c63;
+            box-shadow: 0 6px 20px rgba(236, 72, 153, 0.4);
         }
 
         .btn-success {
             background: var(--md-success);
-            color: white;
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
         }
 
         .btn-success:hover {
             background: #005d19;
+            box-shadow: 0 6px 20px rgba(5, 150, 105, 0.4);
         }
 
         .btn-outline {
             background: transparent;
             color: var(--md-primary);
             border: 2px solid var(--md-primary);
+            box-shadow: none;
         }
 
         .btn-outline:hover {
             background: var(--md-primary);
             color: white;
+            box-shadow: 0 6px 20px rgba(45, 212, 191, 0.4);
         }
 
         .result-area {
             background: var(--md-surface-container);
             border: 1px solid var(--md-outline-variant);
-            border-radius: 12px;
+            border-radius: 16px;
             padding: 20px;
             font-family: 'JetBrains Mono', 'Roboto Mono', monospace;
             font-size: 13px;
@@ -262,33 +339,36 @@
 
         .visualization {
             margin-top: 20px;
-            padding: 24px;
+            padding: 20px;
             background: var(--md-surface-container);
-            border-radius: 12px;
+            border-radius: 16px;
             border: 1px solid var(--md-outline-variant);
-            min-height: 350px;
-            max-height: 600px;
+            min-height: 450px;
+            max-height: 700px;
             overflow-y: auto;
+            overflow-x: hidden;
+            width: 100%;
         }
 
         .token {
             display: inline-block;
             margin: 3px;
-            padding: 6px 12px;
-            border-radius: 16px;
+            padding: 8px 14px;
+            border-radius: 20px;
             font-size: 12px;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
-            border: 1px solid;
+            transition: all 0.3s ease;
+            border: 2px solid;
+            position: relative;
         }
 
         .token:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
 
-        /* POS Tag Styling */
+        /* Enhanced POS Tag Styling with brand colors */
         .token.noun { 
             background: var(--tag-noun-bg); 
             border-color: var(--tag-noun);
@@ -345,17 +425,19 @@
         .notification {
             background: var(--md-surface);
             border: 1px solid var(--md-outline-variant);
-            border-radius: 12px;
-            padding: 16px 20px;
+            border-radius: 16px;
+            padding: 16px 40px 16px 20px;
             color: var(--md-on-surface);
             font-weight: 500;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
             transform: translateX(100%);
             opacity: 0;
             animation: slideIn 0.3s ease forwards;
             cursor: pointer;
             position: relative;
             border-left: 4px solid;
+            word-wrap: break-word;
+            max-width: 100%;
         }
 
         .notification.success { 
@@ -413,15 +495,21 @@
         .stats-card {
             background: var(--md-secondary-container);
             padding: 20px;
-            border-radius: 12px;
+            border-radius: 16px;
             text-align: center;
             border: 1px solid var(--md-outline-variant);
+            transition: all 0.3s ease;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(236, 72, 153, 0.2);
         }
 
         .stats-number {
             font-size: 1.75rem;
-            font-weight: 600;
-            color: var(--md-secondary);
+            font-weight: 700;
+            color: var(--teanga-magenta);
         }
 
         .stats-label {
@@ -430,15 +518,17 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
             margin-top: 4px;
+            font-weight: 600;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
-            border-radius: 8px;
+            border-radius: 12px;
             overflow: hidden;
             border: 1px solid var(--md-outline-variant);
+            box-shadow: 0 4px 12px rgba(45, 212, 191, 0.05);
         }
 
         th, td {
@@ -449,7 +539,7 @@
 
         th {
             background: var(--md-primary-container);
-            font-weight: 600;
+            font-weight: 700;
             color: var(--md-primary);
             font-size: 0.875rem;
         }
@@ -459,12 +549,12 @@
         }
 
         .layer-type {
-            background: var(--md-tertiary);
+            background: var(--teanga-orange);
             color: white;
-            padding: 4px 12px;
-            border-radius: 16px;
+            padding: 6px 14px;
+            border-radius: 20px;
             font-size: 11px;
-            font-weight: 500;
+            font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -473,19 +563,23 @@
         .yaml-viewer {
             background: var(--md-surface-container);
             border: 1px solid var(--md-outline-variant);
-            border-radius: 12px;
+            border-radius: 16px;
             font-family: 'JetBrains Mono', 'Roboto Mono', monospace;
             font-size: 12px;
             line-height: 1.6;
             overflow-x: auto;
-            max-height: 500px;
-            overflow-y: auto;
+            height: 100%;
+            overflow-y: visible;
+            width: 100%;
+            max-width: 100%;
         }
 
         .yaml-line {
             padding: 4px 20px;
             white-space: pre;
             border-bottom: 1px solid rgba(121, 116, 126, 0.1);
+            overflow-x: auto;
+            max-width: 100%;
         }
 
         .yaml-line:hover {
@@ -525,7 +619,7 @@
             padding: 16px 20px;
             background: var(--md-primary-container);
             border-bottom: 1px solid var(--md-outline-variant);
-            border-radius: 12px 12px 0 0;
+            border-radius: 16px 16px 0 0;
         }
 
         .yaml-controls {
@@ -534,36 +628,38 @@
         }
 
         .yaml-btn {
-            background: var(--md-primary);
+            background: var(--teanga-teal);
             color: white;
             border: none;
             padding: 6px 12px;
             border-radius: 16px;
             font-size: 11px;
             cursor: pointer;
-            transition: all 0.2s ease;
-            font-weight: 500;
+            transition: all 0.3s ease;
+            font-weight: 600;
         }
 
         .yaml-btn:hover {
-            background: #5a3f95;
+            background: var(--teanga-teal-dark);
             transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(45, 212, 191, 0.3);
         }
 
         .yaml-stats {
             font-size: 12px;
             color: var(--md-primary);
-            font-weight: 500;
+            font-weight: 600;
         }
 
         .quick-actions {
             display: flex;
             gap: 12px;
-            margin-bottom: 24px;
-            padding: 16px;
-            background: var(--md-tertiary-container);
-            border-radius: 12px;
+            margin-bottom: 20px;
+            padding: 16px 20px;
+            background: var(--teanga-teal-light);
+            border-radius: 16px;
             border: 1px solid var(--md-outline-variant);
+            box-shadow: 0 4px 20px rgba(45, 212, 191, 0.1);
         }
 
         @media (max-width: 1200px) {
@@ -575,6 +671,7 @@
         @media (max-width: 768px) {
             .container {
                 padding: 16px;
+                max-width: 100%;
             }
             
             .app-layout {
@@ -590,10 +687,15 @@
                 right: 16px;
                 max-width: none;
             }
+
+            .rust-badge {
+                padding: 16px;
+                font-size: 0.8rem;
+            }
         }
 
         ::-webkit-scrollbar {
-            width: 8px;
+            width: 4px;
         }
 
         ::-webkit-scrollbar-track {
@@ -601,12 +703,12 @@
         }
 
         ::-webkit-scrollbar-thumb {
-            background: var(--md-outline);
+            background: var(--teanga-teal);
             border-radius: 4px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: var(--md-on-surface-variant);
+            background: var(--teanga-teal-dark);
         }
     </style>
 </head>
@@ -616,10 +718,12 @@
 
     <div class="container">
         <div class="header">
-            <h1><img src="https://teanga.io/teanga/assets/images/teanga-logo.svg" style="width:150px" /> </h1>
+            <h1><img src="https://teanga.io/teanga/assets/images/teanga-logo.svg" style="width:100px" /> </h1>
             <div class="rust-badge">
                 <span class="status-indicator status-loading" id="statusIndicator"></span>
-                Powered by Rust + WebAssembly
+                <div>
+                    Teanga is a library for representing NLP annotations and pipelines. It is written in Rust and provides the core functionality for the Teanga project. For more details of the project see the <a href="https://teanga.io/">Teanga project page</a>.
+                </div>
             </div>
         </div>
         
@@ -701,7 +805,6 @@
                         <button class="btn" onclick="showTokens()">🔤 Tokens</button>
                         <button class="btn" onclick="showLayers()">📊 Layers</button>
                         <button class="btn" onclick="showYAML()">📄 YAML</button>
-                        <button class="btn btn-outline" onclick="exportYAML()">💾 Export</button>
                         <button class="btn btn-secondary" onclick="debugInfo()">🔍 Debug</button>
                     </div>
                     
