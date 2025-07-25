@@ -35,7 +35,6 @@ jobs:
         git clone https://github.com/alamgirqazi/teanga.rs.git teanga-source
         
     - name: Setup Rust
-      if: steps.check-changes.outputs.has_changes == 'true' || github.event_name == 'workflow_dispatch'
       uses: actions-rs/toolchain@v1
       with:
         toolchain: stable
@@ -43,73 +42,31 @@ jobs:
         override: true
 
     - name: Install wasm-pack
-      if: steps.check-changes.outputs.has_changes == 'true' || github.event_name == 'workflow_dispatch'
       run: |
         curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 
     - name: Copy teanga-wasm source
-      if: steps.check-changes.outputs.has_changes == 'true' || github.event_name == 'workflow_dispatch'
       run: |
-        # Check if teanga-wasm directory exists
-        if [ ! -d "teanga-source/teanga-wasm" ]; then
-          echo "❌ teanga-wasm directory not found!"
-          exit 1
-        fi
-        
-        # Copy all files from teanga-wasm to demo (preserve existing files like index.html)
+        # Copy all files from teanga-wasm to demo
         rsync -av --exclude='.git' teanga-source/teanga-wasm/ demo/
         
-        # Also copy the teanga core library that teanga-wasm depends on
+        # Copy the teanga core library dependency
         cp -r teanga-source/teanga demo/
-        
-        echo "=== After copying - demo directory contents ==="
-        ls -la demo/
-        
-        # Check for cargo.toml (lowercase) since that's what's in the repo
-        echo "=== Checking for Cargo.toml files ==="
-        find demo -name "*argo.toml" -type f
-        
-        if [ -f demo/cargo.toml ]; then
-          echo "✅ cargo.toml found (lowercase)"
-          head -5 demo/cargo.toml
-        elif [ -f demo/Cargo.toml ]; then
-          echo "✅ Cargo.toml found (uppercase)"
-          head -5 demo/Cargo.toml
-        else
-          echo "❌ No Cargo.toml file found"
-        fi
 
     - name: Build WASM
-      if: steps.check-changes.outputs.has_changes == 'true' || github.event_name == 'workflow_dispatch'
       run: |
         cd demo
-        
-        # Check if we have a valid Rust project
-        if [ -f cargo.toml ]; then
-          echo "Found cargo.toml (lowercase)"
-        elif [ -f Cargo.toml ]; then
-          echo "Found Cargo.toml (uppercase)"
-        else
-          echo "❌ No Cargo.toml file found for building!"
-          exit 1
-        fi
-        
-        # Build the WASM package
         wasm-pack build --target web --out-dir pkg --dev
 
     - name: Clean up build files
-      if: steps.check-changes.outputs.has_changes == 'true' || github.event_name == 'workflow_dispatch'
       run: |
         cd demo
-        # Remove source files, keep only the built assets and index.html
+        # Remove source files, keep only built assets and index.html
         rm -rf src/
         rm -rf teanga/
-        rm -f Cargo.toml Cargo.lock cargo.toml  # Remove both uppercase and lowercase
+        rm -f Cargo.toml Cargo.lock cargo.toml
         rm -f build-wasm.sh build.sh
         rm -f readme.md README.md
-        
-        # Keep track of what commit we built
-        echo "${{ steps.check-changes.outputs.latest_commit }}" > .last-build-commit
 
     - name: List final structure
       run: |
