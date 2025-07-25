@@ -32,7 +32,7 @@ jobs:
 
     - name: Clone main teanga.rs repo
       run: |
-        git clone https://github.com/alamgirqazi/teanga.rs.git teanga-source
+        git clone https://github.com/TeangaNLP/teanga.rs.git teanga-source
         
     - name: Check if teanga-wasm has changes
       id: check-changes
@@ -72,11 +72,21 @@ jobs:
     - name: Copy teanga-wasm source
       if: steps.check-changes.outputs.has_changes == 'true' || github.event_name == 'workflow_dispatch'
       run: |
-        # Copy the entire teanga-wasm directory
-        cp -r teanga-source/teanga-wasm/* demo/
+        # Copy all files from teanga-wasm to demo (preserve existing files like index.html)
+        rsync -av --exclude='.git' teanga-source/teanga-wasm/ demo/
         
         # Also copy the teanga core library that teanga-wasm depends on
         cp -r teanga-source/teanga demo/
+        
+        echo "=== After copying - demo directory contents ==="
+        ls -la demo/
+        echo "=== Checking for Cargo.toml ==="
+        if [ -f demo/Cargo.toml ]; then
+          echo "✅ Cargo.toml found"
+          head -5 demo/Cargo.toml
+        else
+          echo "❌ Cargo.toml NOT found"
+        fi
 
     - name: Build WASM
       if: steps.check-changes.outputs.has_changes == 'true' || github.event_name == 'workflow_dispatch'
