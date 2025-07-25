@@ -1,0 +1,119 @@
+name: Build WASM and Deploy to Pages
+
+on:
+  # Trigger manually
+  workflow_dispatch:
+  
+  # Trigger on push to main branch (for demo repo changes)
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
+    steps:
+    - name: Checkout demo repo
+      uses: actions/checkout@v4
+      with:
+        path: demo
+
+    - name: Clone main teanga.rs repo
+      run: |
+        git clone https://github.com/alamgirqazi/teanga.rs.git teanga-source
+        
+    - name: Check if teanga-wasm has changes
+      id: check-changes
+      run: |
+        cd teanga-source
+        LATEST_COMMIT=$(git log -1 --format="%H" -- teanga-wasm/)
+        echo "latest_commit=$LATEST_COMMIT" >> $GITHUB_OUTPUT
+        
+        # Check if we have a previous build
+        if [ -f ../demo/.last-build-commit ]; then
+          LAST_BUILD=$(cat ../demo/.last-build-commit)
+          if [ "$LATEST_COMMIT" = "$LAST_BUILD" ]; then
+            echo "No changes in teanga-wasm since last build"
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "Changes detected in teanga-wasm"
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+        else
+          echo "First build - proceeding"
+          echo "has_changes=true" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Setup Rust
+      if: steps.check-changes.outputs.has_changes == 'true' || github.event_name == 'workflow_dispatch'
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        target: wasm32-unknown-unknown
+        override: true
+
+    - name: Install wasm-pack
+      if: steps.check-changes.outputs.has_changes == 'true' || github.event_name == 'workflow_dispatch'
+      run: |
+        curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+    - name: Copy teanga-wasm source
+      if: steps.check-changes.outputs.has_changes == 'true' || github.event_name == 'workflow_dispatch'
+      run: |
+        # Copy the entire teanga-wasm directory
+        cp -r teanga-source/teanga-wasm/* demo/
+        
+        # Also copy the teanga core library that teanga-wasm depends on
+        cp -r teanga-source/teanga demo/
+
+    - name: Build WASM
+      if: steps.check-changes.outputs.has_changes == 'true' || github.event_name == 'workflow_dispatch'
+      run: |
+        cd demo
+        wasm-pack build --target web --out-dir pkg --dev
+
+    - name: Clean up build files
+      if: steps.check-changes.outputs.has_changes == 'true' || github.event_name == 'workflow_dispatch'
+      run: |
+        cd demo
+        # Remove source files, keep only the built assets and index.html
+        rm -rf src/
+        rm -rf teanga/
+        rm -f Cargo.toml Cargo.lock
+        rm -f build-wasm.sh
+        
+        # Keep track of what commit we built
+        echo "${{ steps.check-changes.outputs.latest_commit }}" > .last-build-commit
+
+    - name: List final structure
+      run: |
+        echo "Final demo directory structure:"
+        find demo -type f | head -20
+
+    - name: Setup Pages
+      uses: actions/configure-pages@v4
+
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: './demo'
+
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
+
+    - name: Output deployment URL
+      run: |
+        echo "🚀 Deployed to: ${{ steps.deployment.outputs.page_url }}"

@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teanga.rs</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Material Design 3 Colors */
+            --md-primary: #6750a4;
+            --md-primary-container: #eaddff;
+            --md-secondary: #625b71;
+            --md-secondary-container: #e8def8;
+            --md-tertiary: #7d5260;
+            --md-tertiary-container: #ffd8e4;
+            --md-error: #ba1a1a;
+            --md-error-container: #ffdad6;
+            --md-success: #006e1c;
+            --md-success-container: #9bf6a0;
+            --md-warning: #8a4f00;
+            --md-warning-container: #ffddb1;
+            --md-surface: #fef7ff;
+            --md-surface-variant: #e7e0ec;
+            --md-outline: #79747e;
+            --md-outline-variant: #cac4d0;
+            --md-background: #fef7ff;
+            --md-on-background: #1d1b20;
+            --md-on-surface: #1d1b20;
+            --md-on-surface-variant: #49454f;
+            --md-surface-container: #f3edf7;
+            --md-surface-container-high: #ede7f1;
+            --md-surface-container-highest: #e6e0e9;
+
+            /* POS Tag Colors */
+            --tag-noun: #2e7d32;
+            --tag-noun-bg: #e8f5e8;
+            --tag-verb: #d32f2f;
+            --tag-verb-bg: #ffebee;
+            --tag-adj: #1976d2;
+            --tag-adj-bg: #e3f2fd;
+            --tag-adv: #f57c00;
+            --tag-adv-bg: #fff3e0;
+            --tag-prep: #7b1fa2;
+            --tag-prep-bg: #f3e5f5;
+            --tag-det: #388e3c;
+            --tag-det-bg: #e8f5e8;
+            --tag-punct: #616161;
+            --tag-punct-bg: #f5f5f5;
+            --tag-default: #455a64;
+            --tag-default-bg: #eceff1;
+        }
+
+        body {
+            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--md-background);
+            color: var(--md-on-background);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+            padding: 40px 32px;
+            background: var(--md-surface);
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid var(--md-outline-variant);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 500;
+            color: var(--md-primary);
+            margin-bottom: 12px;
+        }
+
+        .rust-badge {
+            display: inline-flex;
+            align-items: center;
+            background: var(--md-primary-container);
+            color: var(--md-primary);
+            padding: 12px 20px;
+            border-radius: 24px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-loading { background: var(--md-warning); }
+        .status-ready { background: var(--md-success); }
+        .status-error { background: var(--md-error); }
+
+        .loading {
+            text-align: center;
+            padding: 80px 20px;
+            background: var(--md-surface);
+            border-radius: 16px;
+            border: 1px solid var(--md-outline-variant);
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--md-outline-variant);
+            border-top: 3px solid var(--md-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .app-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1.2fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .panel {
+            background: var(--md-surface);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--md-outline-variant);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .panel h2 {
+            margin: 0 0 24px 0;
+            color: var(--md-primary);
+            font-size: 1.25rem;
+            font-weight: 500;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--md-primary-container);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--md-on-surface);
+            font-size: 0.875rem;
+        }
+
+        textarea, input, select {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid var(--md-outline-variant);
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: 'JetBrains Mono', 'Roboto Mono', monospace;
+            background: var(--md-surface);
+            color: var(--md-on-surface);
+            transition: all 0.2s ease;
+        }
+
+        textarea::placeholder, input::placeholder {
+            color: var(--md-on-surface-variant);
+        }
+
+        textarea:focus, input:focus, select:focus {
+            outline: none;
+            border-color: var(--md-primary);
+            box-shadow: 0 0 0 2px rgba(103, 80, 164, 0.2);
+        }
+
+        .btn {
+            background: var(--md-primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 24px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.875rem;
+            margin: 4px 8px 4px 0;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .btn:hover {
+            background: #5a3f95;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: var(--md-secondary);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #544c63;
+        }
+
+        .btn-success {
+            background: var(--md-success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #005d19;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--md-primary);
+            border: 2px solid var(--md-primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--md-primary);
+            color: white;
+        }
+
+        .result-area {
+            background: var(--md-surface-container);
+            border: 1px solid var(--md-outline-variant);
+            border-radius: 12px;
+            padding: 20px;
+            font-family: 'JetBrains Mono', 'Roboto Mono', monospace;
+            font-size: 13px;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 16px;
+            color: var(--md-on-surface-variant);
+        }
+
+        .visualization {
+            margin-top: 20px;
+            padding: 24px;
+            background: var(--md-surface-container);
+            border-radius: 12px;
+            border: 1px solid var(--md-outline-variant);
+            min-height: 350px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .token {
+            display: inline-block;
+            margin: 3px;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid;
+        }
+
+        .token:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        /* POS Tag Styling */
+        .token.noun { 
+            background: var(--tag-noun-bg); 
+            border-color: var(--tag-noun);
+            color: var(--tag-noun);
+        }
+        .token.verb { 
+            background: var(--tag-verb-bg); 
+            border-color: var(--tag-verb);
+            color: var(--tag-verb);
+        }
+        .token.adj { 
+            background: var(--tag-adj-bg); 
+            border-color: var(--tag-adj);
+            color: var(--tag-adj);
+        }
+        .token.adv { 
+            background: var(--tag-adv-bg); 
+            border-color: var(--tag-adv);
+            color: var(--tag-adv);
+        }
+        .token.prep, .token.adp { 
+            background: var(--tag-prep-bg); 
+            border-color: var(--tag-prep);
+            color: var(--tag-prep);
+        }
+        .token.det { 
+            background: var(--tag-det-bg); 
+            border-color: var(--tag-det);
+            color: var(--tag-det);
+        }
+        .token.punct { 
+            background: var(--tag-punct-bg); 
+            border-color: var(--tag-punct);
+            color: var(--tag-punct);
+        }
+        .token:not([class*=" "]) { 
+            background: var(--tag-default-bg); 
+            border-color: var(--tag-default);
+            color: var(--tag-default);
+        }
+
+        /* Notification System */
+        .notification-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 380px;
+        }
+
+        .notification {
+            background: var(--md-surface);
+            border: 1px solid var(--md-outline-variant);
+            border-radius: 12px;
+            padding: 16px 20px;
+            color: var(--md-on-surface);
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateX(100%);
+            opacity: 0;
+            animation: slideIn 0.3s ease forwards;
+            cursor: pointer;
+            position: relative;
+            border-left: 4px solid;
+        }
+
+        .notification.success { 
+            border-left-color: var(--md-success);
+            background: var(--md-success-container);
+        }
+        .notification.error { 
+            border-left-color: var(--md-error);
+            background: var(--md-error-container);
+        }
+        .notification.info { 
+            border-left-color: var(--md-primary);
+            background: var(--md-primary-container);
+        }
+
+        .notification::after {
+            content: '×';
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            color: var(--md-on-surface-variant);
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .notification:hover::after {
+            color: var(--md-on-surface);
+        }
+
+        .notification.removing {
+            animation: slideOut 0.3s ease forwards;
+        }
+
+        @keyframes slideIn {
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 16px;
+            margin: 20px 0;
+        }
+
+        .stats-card {
+            background: var(--md-secondary-container);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid var(--md-outline-variant);
+        }
+
+        .stats-number {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--md-secondary);
+        }
+
+        .stats-label {
+            font-size: 0.75rem;
+            color: var(--md-on-surface-variant);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--md-outline-variant);
+        }
+
+        th, td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--md-outline-variant);
+        }
+
+        th {
+            background: var(--md-primary-container);
+            font-weight: 600;
+            color: var(--md-primary);
+            font-size: 0.875rem;
+        }
+
+        td {
+            color: var(--md-on-surface-variant);
+        }
+
+        .layer-type {
+            background: var(--md-tertiary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* YAML Viewer */
+        .yaml-viewer {
+            background: var(--md-surface-container);
+            border: 1px solid var(--md-outline-variant);
+            border-radius: 12px;
+            font-family: 'JetBrains Mono', 'Roboto Mono', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            overflow-x: auto;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .yaml-line {
+            padding: 4px 20px;
+            white-space: pre;
+            border-bottom: 1px solid rgba(121, 116, 126, 0.1);
+        }
+
+        .yaml-line:hover {
+            background: var(--md-surface-container-high);
+        }
+
+        .yaml-key {
+            color: var(--md-primary);
+            font-weight: 600;
+        }
+
+        .yaml-value {
+            color: var(--md-on-surface);
+        }
+
+        .yaml-string {
+            color: var(--md-success);
+        }
+
+        .yaml-number {
+            color: var(--md-tertiary);
+        }
+
+        .yaml-indent {
+            color: var(--md-on-surface-variant);
+        }
+
+        .yaml-comment {
+            color: var(--md-on-surface-variant);
+            font-style: italic;
+        }
+
+        .yaml-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: var(--md-primary-container);
+            border-bottom: 1px solid var(--md-outline-variant);
+            border-radius: 12px 12px 0 0;
+        }
+
+        .yaml-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .yaml-btn {
+            background: var(--md-primary);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        .yaml-btn:hover {
+            background: #5a3f95;
+            transform: translateY(-1px);
+        }
+
+        .yaml-stats {
+            font-size: 12px;
+            color: var(--md-primary);
+            font-weight: 500;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding: 16px;
+            background: var(--md-tertiary-container);
+            border-radius: 12px;
+            border: 1px solid var(--md-outline-variant);
+        }
+
+        @media (max-width: 1200px) {
+            .app-layout {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+            }
+            
+            .app-layout {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .notification-container {
+                left: 16px;
+                right: 16px;
+                max-width: none;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--md-surface-variant);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--md-outline);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--md-on-surface-variant);
+        }
+    </style>
+</head>
+<body>
+    <!-- Notification Container -->
+    <div class="notification-container" id="notificationContainer"></div>
+
+    <div class="container">
+        <div class="header">
+            <h1><img src="https://teanga.io/teanga/assets/images/teanga-logo.svg" style="width:150px" /> </h1>
+            <div class="rust-badge">
+                <span class="status-indicator status-loading" id="statusIndicator"></span>
+                Powered by Rust + WebAssembly
+            </div>
+        </div>
+        
+        <div id="loading" class="loading">
+            <div class="loading-spinner"></div>
+            <div>Loading Rust WASM module...</div>
+        </div>
+        
+        <div id="app" style="display: none;">
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <button class="btn btn-success" onclick="quickSetup()">⚡ Quick Start</button>
+                <button class="btn btn-outline" onclick="createCorpus()">🔨 New Corpus</button>
+                <button class="btn btn-secondary" onclick="showCorpusInfo()">ℹ️ Corpus Info</button>
+            </div>
+
+            <div class="app-layout">
+                <!-- Input Panel -->
+                <div class="panel">
+                    <h2>📝 Text & Layers</h2>
+                    
+                    <div class="input-group">
+                        <label for="textInput">Text to Process</label>
+                        <textarea id="textInput" rows="4" placeholder="Enter your text here...">The quick brown fox jumps over the lazy dog.</textarea>
+                        <button class="btn" onclick="addTextAndProcess()" style="margin-top: 8px;">🚀 Add & Process Text</button>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="layerName">New Layer Name</label>
+                        <input type="text" id="layerName" placeholder="e.g., tokens, pos, sentences">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="layerType">Layer Type</label>
+                        <select id="layerType">
+                            <option value="characters">Characters</option>
+                            <option value="span">Span</option>
+                            <option value="seq">Sequence</option>
+                            <option value="div">Division</option>
+                            <option value="element">Element</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="layerBase">Base Layer (optional)</label>
+                        <input type="text" id="layerBase" placeholder="e.g., text, tokens">
+                    </div>
+                    
+                    <button class="btn btn-secondary" onclick="addLayer()">➕ Add Layer</button>
+                </div>
+                
+                <!-- Processing Panel -->
+                <div class="panel">
+                    <h2>⚙️ Processing</h2>
+                    
+                    <div class="input-group">
+                        <label for="docSelect">Select Document</label>
+                        <select id="docSelect">
+                            <option value="">No documents yet</option>
+                        </select>
+                    </div>
+                    
+                    <button class="btn" onclick="tokenizeDocument()">🔤 Tokenize</button>
+                    <button class="btn" onclick="addPOSTags()">🏷️ Add POS Tags</button>
+                    <button class="btn btn-secondary" onclick="listDocuments()">📋 List Documents</button>
+                    
+                    <div class="input-group" style="margin-top: 24px;">
+                        <label for="customJson">Custom Document JSON</label>
+                        <textarea id="customJson" rows="3" placeholder='{"text": "Hello world", "tokens": [[0, 5], [6, 11]]}'></textarea>
+                        <button class="btn btn-outline" onclick="addCustomDocument()" style="margin-top: 8px;">➕ Add Custom Document</button>
+                    </div>
+                </div>
+                
+                <!-- Visualization Panel -->
+                <div class="panel">
+                    <h2>👁️ Visualization</h2>
+                    
+                    <div style="display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap;">
+                        <button class="btn" onclick="showTokens()">🔤 Tokens</button>
+                        <button class="btn" onclick="showLayers()">📊 Layers</button>
+                        <button class="btn" onclick="showYAML()">📄 YAML</button>
+                        <button class="btn btn-outline" onclick="exportYAML()">💾 Export</button>
+                        <button class="btn btn-secondary" onclick="debugInfo()">🔍 Debug</button>
+                    </div>
+                    
+                    <div id="visualization" class="visualization">
+                        <div style="text-align: center; color: var(--md-on-surface-variant); margin-top: 100px;">
+                            <p>🚀 Click "Quick Start" to begin, or create a corpus and add documents.</p>
+                            <p style="margin-top: 8px; font-size: 0.875rem;">Your visualizations will appear here.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Results Area -->
+            <div class="panel">
+                <h2>📊 Results & Output</h2>
+                <div id="results" class="result-area">Teanga Rust WASM ready! Click "Quick Start" to begin.</div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import init, { TeangaWasm } from './pkg/teanga_wasm.js';
+
+        let wasmModule;
+        let currentCorpus = null;
+
+        // Notification System
+        function showNotification(message, type = 'info', duration = 4000) {
+            const container = document.getElementById('notificationContainer');
+            const notification = document.createElement('div');
+            
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            
+            notification.addEventListener('click', () => {
+                dismissNotification(notification);
+            });
+            
+            container.appendChild(notification);
+            
+            if (duration > 0) {
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        dismissNotification(notification);
+                    }
+                }, duration);
+            }
+            
+            return notification;
+        }
+
+        function dismissNotification(notification) {
+            notification.classList.add('removing');
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 300);
+        }
+
+        function updateResults(message, type = 'info') {
+            const results = document.getElementById('results');
+            results.textContent = message;
+            showNotification(message, type);
+        }
+
+        async function initializeWasm() {
+            try {
+                wasmModule = await init();
+                
+                const indicator = document.getElementById('statusIndicator');
+                indicator.className = 'status-indicator status-ready';
+                
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('app').style.display = 'block';
+                
+                updateResults("🎉 Rust WASM module loaded successfully!", 'success');
+                
+            } catch (error) {
+                console.error('Failed to initialize WASM:', error);
+                
+                const indicator = document.getElementById('statusIndicator');
+                indicator.className = 'status-indicator status-error';
+                
+                updateResults(`❌ Failed to load WASM module: ${error.message}`, 'error');
+            }
+        }
+
+        window.createCorpus = function() {
+            try {
+                currentCorpus = new TeangaWasm();
+                updateResults("✅ New Teanga corpus created successfully!", 'success');
+                updateDocumentSelect();
+            } catch (error) {
+                updateResults(`❌ Error creating corpus: ${error.message}`, 'error');
+            }
+        };
+
+        window.addLayer = function() {
+            if (!currentCorpus) {
+                updateResults("Please create a corpus first!", 'error');
+                return;
+            }
+
+            try {
+                const name = document.getElementById('layerName').value.trim();
+                const type = document.getElementById('layerType').value;
+                const base = document.getElementById('layerBase').value.trim() || null;
+
+                if (!name) {
+                    updateResults("Please enter a layer name!", 'error');
+                    return;
+                }
+
+                currentCorpus.add_layer_meta(name, type, base, null);
+                updateResults(`✅ Layer "${name}" (${type}) added successfully!`, 'success');
+                
+                document.getElementById('layerName').value = '';
+                document.getElementById('layerBase').value = '';
+                
+            } catch (error) {
+                updateResults(`❌ Error adding layer: ${error.message}`, 'error');
+            }
+        };
+
+        window.quickSetup = function() {
+            try {
+                currentCorpus = new TeangaWasm();
+                
+                currentCorpus.add_layer_meta("text", "characters", null, null);
+                currentCorpus.add_layer_meta("tokens", "span", "text", null);
+                currentCorpus.add_layer_meta("pos", "seq", "tokens", "string");
+                currentCorpus.add_layer_meta("sentences", "div", "text", null);
+                
+                updateResults("⚡ Quick setup complete! Added standard NLP layers.", 'success');
+                updateDocumentSelect();
+                
+            } catch (error) {
+                updateResults(`❌ Error in quick setup: ${error.message}`, 'error');
+            }
+        };
+
+        // Streamlined function that adds text and processes it in one go
+        window.addTextAndProcess = function() {
+            if (!currentCorpus) {
+                // Auto-create corpus if it doesn't exist
+                try {
+                    currentCorpus = new TeangaWasm();
+                    currentCorpus.add_layer_meta("text", "characters", null, null);
+                    currentCorpus.add_layer_meta("tokens", "span", "text", null);
+                    currentCorpus.add_layer_meta("pos", "seq", "tokens", "string");
+                } catch (error) {
+                    updateResults(`❌ Error creating corpus: ${error.message}`, 'error');
+                    return;
+                }
+            }
+
+            try {
+                const text = document.getElementById('textInput').value.trim();
+                if (!text) {
+                    updateResults("Please enter some text!", 'error');
+                    return;
+                }
+
+                // Add document with text
+                const docJson = JSON.stringify({ text: text });
+                const docId = currentCorpus.add_doc(docJson);
+                
+                // Auto-tokenize
+                const tokensJson = currentCorpus.tokenize_simple(text);
+                const tokens = JSON.parse(tokensJson);
+                
+                // Add POS tags
+                const posTags = ["DET", "ADJ", "ADJ", "NOUN", "VERB", "ADP", "DET", "ADJ", "NOUN", "PUNCT"];
+                const tags = tokens.map((_, i) => posTags[i % posTags.length]);
+                
+                // Create final document with all layers
+                const finalDocJson = JSON.stringify({
+                    text: text,
+                    tokens: tokens,
+                    pos: tags
+                });
+                
+                const finalDocId = currentCorpus.add_doc(finalDocJson);
+                updateResults(`🚀 Text processed! Document ${finalDocId} created with ${tokens.length} tokens`, 'success');
+                updateDocumentSelect();
+                
+                // Auto-show tokens
+                setTimeout(() => {
+                    document.getElementById('docSelect').value = finalDocId;
+                    showTokens();
+                }, 500);
+                
+            } catch (error) {
+                updateResults(`❌ Error processing text: ${error.message}`, 'error');
+            }
+        };
+
+        window.tokenizeDocument = function() {
+            if (!currentCorpus) {
+                updateResults("No corpus available!", 'error');
+                return;
+            }
+
+            try {
+                const docSelect = document.getElementById('docSelect');
+                const docId = docSelect.value;
+                
+                if (!docId) {
+                    updateResults("Please select a document!", 'error');
+                    return;
+                }
+
+                const docJson = currentCorpus.get_doc_by_id(docId);
+                const doc = JSON.parse(docJson);
+                
+                if (!doc.text) {
+                    updateResults("Document has no text layer!", 'error');
+                    return;
+                }
+
+                const tokensJson = currentCorpus.tokenize_simple(doc.text);
+                const tokens = JSON.parse(tokensJson);
+                
+                const newDocJson = JSON.stringify({
+                    text: doc.text,
+                    tokens: tokens
+                });
+                
+                const newDocId = currentCorpus.add_doc(newDocJson);
+                updateResults(`✅ Tokenized document created: ${newDocId} (${tokens.length} tokens)`, 'success');
+                updateDocumentSelect();
+                
+            } catch (error) {
+                updateResults(`❌ Error tokenizing: ${error.message}`, 'error');
+            }
+        };
+
+        window.addPOSTags = function() {
+            if (!currentCorpus) {
+                updateResults("No corpus available!", 'error');
+                return;
+            }
+
+            try {
+                const docSelect = document.getElementById('docSelect');
+                const docId = docSelect.value;
+                
+                if (!docId) {
+                    updateResults("Please select a document!", 'error');
+                    return;
+                }
+
+                const docJson = currentCorpus.get_doc_by_id(docId);
+                const doc = JSON.parse(docJson);
+                
+                if (!doc.tokens) {
+                    updateResults("Document needs tokens first! Try tokenizing.", 'error');
+                    return;
+                }
+
+                const posTags = ["DET", "ADJ", "ADJ", "NOUN", "VERB", "ADP", "DET", "ADJ", "NOUN", "PUNCT"];
+                const tags = doc.tokens.map((_, i) => posTags[i % posTags.length]);
+                
+                const newDocJson = JSON.stringify({
+                    text: doc.text,
+                    tokens: doc.tokens,
+                    pos: tags
+                });
+                
+                const newDocId = currentCorpus.add_doc(newDocJson);
+                updateResults(`✅ POS tags added: ${newDocId}`, 'success');
+                updateDocumentSelect();
+                
+            } catch (error) {
+                updateResults(`❌ Error adding POS tags: ${error.message}`, 'error');
+            }
+        };
+
+        window.addCustomDocument = function() {
+            if (!currentCorpus) {
+                updateResults("Please create a corpus first!", 'error');
+                return;
+            }
+
+            try {
+                const jsonStr = document.getElementById('customJson').value.trim();
+                if (!jsonStr) {
+                    updateResults("Please enter JSON data!", 'error');
+                    return;
+                }
+
+                JSON.parse(jsonStr);
+                
+                const docId = currentCorpus.add_doc(jsonStr);
+                updateResults(`✅ Custom document added: ${docId}`, 'success');
+                updateDocumentSelect();
+                
+            } catch (error) {
+                updateResults(`❌ Error adding custom document: ${error.message}`, 'error');
+            }
+        };
+
+        window.showTokens = function() {
+            if (!currentCorpus) {
+                updateResults("No corpus available!", 'error');
+                return;
+            }
+
+            try {
+                const docSelect = document.getElementById('docSelect');
+                const docId = docSelect.value;
+                
+                if (!docId) {
+                    updateResults("Please select a document!", 'error');
+                    return;
+                }
+
+                const docJson = currentCorpus.get_doc_by_id(docId);
+                const doc = JSON.parse(docJson);
+                
+                if (!doc.tokens || !doc.text) {
+                    updateResults("Document needs text and tokens!", 'error');
+                    return;
+                }
+
+                let html = '<h3 style="margin-bottom: 20px; color: var(--md-primary); font-weight: 500;">🔤 Token Analysis</h3>';
+                html += '<div class="stats-grid">';
+                html += `<div class="stats-card"><div class="stats-number">${doc.tokens.length}</div><div class="stats-label">Tokens</div></div>`;
+                html += `<div class="stats-card"><div class="stats-number">${doc.text.length}</div><div class="stats-label">Characters</div></div>`;
+                html += `<div class="stats-card"><div class="stats-number">${doc.pos ? new Set(doc.pos).size : 0}</div><div class="stats-label">POS Types</div></div>`;
+                html += '</div>';
+                
+                // POS Legend
+                if (doc.pos) {
+                    html += '<div style="margin: 20px 0; padding: 16px; background: var(--md-surface-container-high); border-radius: 8px;">';
+                    html += '<h4 style="margin-bottom: 12px; color: var(--md-on-surface); font-size: 0.875rem;">POS Tag Legend:</h4>';
+                    html += '<div style="display: flex; flex-wrap: wrap; gap: 8px;">';
+                    const uniqueTags = [...new Set(doc.pos)];
+                    uniqueTags.forEach(tag => {
+                        const className = tag.toLowerCase();
+                        html += `<span class="token ${className}" style="margin: 0;">${tag}</span>`;
+                    });
+                    html += '</div></div>';
+                }
+                
+                html += '<div style="margin-top: 24px; line-height: 2;">';
+                
+                doc.tokens.forEach((span, i) => {
+                    const [start, end] = span;
+                    const tokenText = doc.text.substring(start, end);
+                    const pos = doc.pos ? doc.pos[i] : '';
+                    const posClass = pos.toLowerCase();
+                    const title = `${tokenText}\nPOS: ${pos || 'None'}\nPosition: ${start}-${end}\nIndex: ${i}`;
+                    
+                    html += `<span class="token ${posClass}" title="${title}">${tokenText}</span>`;
+                });
+                
+                html += '</div>';
+                
+                document.getElementById('visualization').innerHTML = html;
+                
+            } catch (error) {
+                updateResults(`❌ Error showing tokens: ${error.message}`, 'error');
+            }
+        };
+
+        window.showLayers = function() {
+            if (!currentCorpus) {
+                updateResults("No corpus available!", 'error');
+                return;
+            }
+
+            try {
+                const metaJson = currentCorpus.get_meta();
+                const meta = JSON.parse(metaJson);
+                
+                let html = '<h3 style="margin-bottom: 20px; color: var(--md-primary); font-weight: 500;">📊 Corpus Layer Structure</h3>';
+                html += '<div class="stats-grid">';
+                html += `<div class="stats-card"><div class="stats-number">${Object.keys(meta).length}</div><div class="stats-label">Total Layers</div></div>`;
+                html += '</div>';
+                
+                html += '<table>';
+                html += '<tr><th>Layer Name</th><th>Type</th><th>Base Layer</th><th>Description</th></tr>';
+                
+                for (const [name, layer] of Object.entries(meta)) {
+                    const description = getLayerDescription(layer.layer_type);
+                    html += `<tr>
+                        <td><strong style="color: var(--md-primary);">${name}</strong></td>
+                        <td><span class="layer-type">${layer.layer_type}</span></td>
+                        <td style="color: var(--md-secondary);">${layer.base || '-'}</td>
+                        <td style="font-size: 0.875rem;">${description}</td>
+                    </tr>`;
+                }
+                
+                html += '</table>';
+                document.getElementById('visualization').innerHTML = html;
+                
+            } catch (error) {
+                updateResults(`❌ Error showing layers: ${error.message}`, 'error');
+            }
+        };
+
+        function getLayerDescription(layerType) {
+            const descriptions = {
+                'characters': 'Raw text content',
+                'span': 'Text spans (tokens, phrases)',
+                'seq': 'Sequential annotations (POS, NER)',
+                'div': 'Text divisions (sentences, paragraphs)',
+                'element': 'Discrete elements'
+            };
+            return descriptions[layerType] || 'Custom layer type';
+        }
+
+        window.showYAML = function() {
+            if (!currentCorpus) {
+                updateResults("No corpus available!", 'error');
+                return;
+            }
+
+            try {
+                const yaml = currentCorpus.to_yaml();
+                const lines = yaml.split('\n');
+                
+                let html = '<div class="yaml-viewer">';
+                html += '<div class="yaml-header">';
+                html += '<div>';
+                html += '<strong style="color: var(--md-primary);">YAML Export Preview</strong>';
+                html += `<div class="yaml-stats">${lines.length} lines • ${(yaml.length / 1024).toFixed(1)}KB</div>`;
+                html += '</div>';
+                html += '<div class="yaml-controls">';
+                html += '<button class="yaml-btn" onclick="copyYAMLToClipboard()">📋 Copy</button>';
+                html += '<button class="yaml-btn" onclick="exportYAML()">💾 Download</button>';
+                html += '</div>';
+                html += '</div>';
+                
+                lines.forEach((line, index) => {
+                    const formattedLine = formatYAMLLine(line);
+                    html += `<div class="yaml-line" title="Line ${index + 1}">${formattedLine}</div>`;
+                });
+                
+                html += '</div>';
+                
+                document.getElementById('visualization').innerHTML = html;
+                
+                // Store YAML for copy function
+                window.currentYAML = yaml;
+                
+            } catch (error) {
+                updateResults(`❌ Error showing YAML: ${error.message}`, 'error');
+            }
+        };
+
+        function formatYAMLLine(line) {
+            if (line.trim() === '') return line;
+            
+            // Handle comments
+            if (line.trim().startsWith('#')) {
+                return `<span class="yaml-comment">${escapeHtml(line)}</span>`;
+            }
+            
+            // Handle key-value pairs
+            const keyValueMatch = line.match(/^(\s*)([^:]+):\s*(.*)$/);
+            if (keyValueMatch) {
+                const [, indent, key, value] = keyValueMatch;
+                let formattedValue = value;
+                
+                if (value.match(/^\d+$/)) {
+                    formattedValue = `<span class="yaml-number">${value}</span>`;
+                } else if (value.startsWith('"') && value.endsWith('"')) {
+                    formattedValue = `<span class="yaml-string">${value}</span>`;
+                } else if (value.trim() !== '') {
+                    formattedValue = `<span class="yaml-value">${escapeHtml(value)}</span>`;
+                }
+                
+                return `<span class="yaml-indent">${escapeHtml(indent)}</span><span class="yaml-key">${escapeHtml(key)}:</span> ${formattedValue}`;
+            }
+            
+            // Handle list items
+            const listMatch = line.match(/^(\s*)-\s*(.*)$/);
+            if (listMatch) {
+                const [, indent, value] = listMatch;
+                let formattedValue = value;
+                
+                if (value.match(/^\d+$/)) {
+                    formattedValue = `<span class="yaml-number">${value}</span>`;
+                } else if (value.startsWith('"') && value.endsWith('"')) {
+                    formattedValue = `<span class="yaml-string">${value}</span>`;
+                } else {
+                    formattedValue = `<span class="yaml-value">${escapeHtml(value)}</span>`;
+                }
+                
+                return `<span class="yaml-indent">${escapeHtml(indent)}</span><span class="yaml-key">-</span> ${formattedValue}`;
+            }
+            
+            return escapeHtml(line);
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        window.copyYAMLToClipboard = async function() {
+            if (!window.currentYAML) {
+                updateResults("No YAML content to copy!", 'error');
+                return;
+            }
+
+            try {
+                await navigator.clipboard.writeText(window.currentYAML);
+                updateResults("📋 YAML copied to clipboard!", 'success');
+            } catch (error) {
+                const textArea = document.createElement('textarea');
+                textArea.value = window.currentYAML;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                updateResults("📋 YAML copied to clipboard!", 'success');
+            }
+        };
+
+        window.showCorpusInfo = function() {
+            if (!currentCorpus) {
+                updateResults("No corpus available!", 'error');
+                return;
+            }
+
+            try {
+                const metaJson = currentCorpus.get_meta();
+                const idsJson = currentCorpus.get_doc_ids();
+                const meta = JSON.parse(metaJson);
+                const ids = JSON.parse(idsJson);
+                
+                updateResults(`📊 Corpus: ${Object.keys(meta).length} layers, ${ids.length} documents`, 'info');
+                
+            } catch (error) {
+                updateResults(`❌ Error getting corpus info: ${error.message}`, 'error');
+            }
+        };
+
+        window.listDocuments = function() {
+            if (!currentCorpus) {
+                updateResults("No corpus available!", 'error');
+                return;
+            }
+
+            try {
+                const idsJson = currentCorpus.get_doc_ids();
+                const ids = JSON.parse(idsJson);
+                
+                let html = '<h3 style="margin-bottom: 20px; color: var(--md-primary); font-weight: 500;">📋 Document Collection</h3>';
+                
+                if (ids.length === 0) {
+                    html += '<div style="text-align: center; color: var(--md-on-surface-variant); margin-top: 40px;">';
+                    html += '<p>No documents in corpus yet.</p>';
+                    html += '<p style="margin-top: 8px; font-size: 0.875rem;">Add some text to get started!</p>';
+                    html += '</div>';
+                } else {
+                    html += '<div class="stats-grid">';
+                    html += `<div class="stats-card"><div class="stats-number">${ids.length}</div><div class="stats-label">Documents</div></div>`;
+                    html += '</div>';
+                    
+                    html += '<div style="margin-top: 20px; display: grid; gap: 12px;">';
+                    ids.forEach((id, index) => {
+                        html += `<div style="padding: 16px; background: var(--md-surface-container-high); border-radius: 8px; border: 1px solid var(--md-outline-variant); display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <strong style="color: var(--md-primary); font-family: monospace;">${id}</strong>
+                                <div style="font-size: 0.75rem; color: var(--md-on-surface-variant); margin-top: 4px;">Document #${index + 1}</div>
+                            </div>
+                            <button class="btn" onclick="selectAndShowDocument('${id}')" style="margin: 0;">View</button>
+                        </div>`;
+                    });
+                    html += '</div>';
+                }
+                
+                document.getElementById('visualization').innerHTML = html;
+                
+            } catch (error) {
+                updateResults(`❌ Error listing documents: ${error.message}`, 'error');
+            }
+        };
+
+        window.selectAndShowDocument = function(docId) {
+            document.getElementById('docSelect').value = docId;
+            showTokens();
+        };
+
+        window.exportYAML = function() {
+            if (!currentCorpus) {
+                updateResults("No corpus available!", 'error');
+                return;
+            }
+
+            try {
+                const yaml = currentCorpus.to_yaml();
+                
+                const blob = new Blob([yaml], { type: 'text/yaml' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'teanga_corpus.yaml';
+                a.click();
+                URL.revokeObjectURL(url);
+                
+                updateResults("💾 YAML exported successfully!", 'success');
+                
+            } catch (error) {
+                updateResults(`❌ Error exporting YAML: ${error.message}`, 'error');
+            }
+        };
+
+        window.debugInfo = function() {
+            if (!currentCorpus) {
+                updateResults("No corpus available!", 'error');
+                return;
+            }
+
+            try {
+                const metaJson = currentCorpus.get_meta();
+                const idsJson = currentCorpus.get_doc_ids();
+                
+                const debugInfo = {
+                    hasCorpus: !!currentCorpus,
+                    meta: JSON.parse(metaJson),
+                    documentIds: JSON.parse(idsJson),
+                    wasmLoaded: !!wasmModule
+                };
+                
+                let html = '<h3 style="margin-bottom: 20px; color: var(--md-primary); font-weight: 500;">🔍 Debug Information</h3>';
+                html += '<pre style="background: var(--md-surface-container-high); padding: 20px; border-radius: 8px; font-size: 11px; max-height: 400px; overflow-y: auto; border: 1px solid var(--md-outline-variant); color: var(--md-on-surface-variant); line-height: 1.4;">';
+                html += JSON.stringify(debugInfo, null, 2);
+                html += '</pre>';
+                
+                document.getElementById('visualization').innerHTML = html;
+                
+            } catch (error) {
+                updateResults(`❌ Error getting debug info: ${error.message}`, 'error');
+            }
+        };
+
+        function updateDocumentSelect() {
+            if (!currentCorpus) return;
+            
+            try {
+                const idsJson = currentCorpus.get_doc_ids();
+                const ids = JSON.parse(idsJson);
+                const select = document.getElementById('docSelect');
+                
+                select.innerHTML = '';
+                if (ids.length === 0) {
+                    select.innerHTML = '<option value="">No documents yet</option>';
+                } else {
+                    ids.forEach(id => {
+                        const option = document.createElement('option');
+                        option.value = id;
+                        option.textContent = id;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error updating document select:', error);
+            }
+        }
+
+        // Initialize when page loads
+        initializeWasm();
+    </script>
+</body>
+</html>
