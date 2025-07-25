@@ -59,7 +59,7 @@ jobs:
         echo "=== Looking for Cargo files ==="
         find demo -name "*argo*" -type f
 
-    - name: Fix Cargo.toml case
+    - name: Fix Cargo.toml case and dependencies
       run: |
         cd demo
         # wasm-pack expects Cargo.toml (uppercase), but repo has cargo.toml (lowercase)
@@ -68,12 +68,38 @@ jobs:
           mv cargo.toml Cargo.toml
         fi
         
-        # Verify we have the right file
+        # Also fix teanga dependency Cargo.toml case
+        if [ -f teanga/cargo.toml ]; then
+          echo "Found teanga/cargo.toml (lowercase), renaming to Cargo.toml"
+          mv teanga/cargo.toml teanga/Cargo.toml
+        fi
+        
+        # Fix the teanga dependency path - change from ../teanga to ./teanga
+        echo "=== Fixing teanga dependency path ==="
+        sed -i 's|path = "../teanga"|path = "./teanga"|g' Cargo.toml
+        
+        # Verify we have the right file and the path is fixed
         if [ -f Cargo.toml ]; then
           echo "✅ Cargo.toml ready for build"
-          head -5 Cargo.toml
+          echo "=== Relevant Cargo.toml dependencies section ==="
+          grep -A 5 -B 5 "teanga" Cargo.toml || echo "No teanga dependency found"
         else
           echo "❌ Still no Cargo.toml file!"
+          exit 1
+        fi
+        
+        # Verify teanga directory structure
+        echo "=== Checking teanga dependency ==="
+        if [ -d teanga ]; then
+          echo "✅ teanga directory exists"
+          if [ -f teanga/Cargo.toml ]; then
+            echo "✅ teanga/Cargo.toml exists"
+          else
+            echo "❌ teanga/Cargo.toml missing!"
+            exit 1
+          fi
+        else
+          echo "❌ teanga directory missing!"
           exit 1
         fi
 
