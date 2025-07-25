@@ -52,6 +52,30 @@ jobs:
         
         # Copy the teanga core library dependency
         cp -r teanga-source/teanga demo/
+        
+        # Debug: Check what got copied
+        echo "=== Demo directory after copying ==="
+        ls -la demo/
+        echo "=== Looking for Cargo files ==="
+        find demo -name "*argo*" -type f
+
+    - name: Fix Cargo.toml case
+      run: |
+        cd demo
+        # wasm-pack expects Cargo.toml (uppercase), but repo has cargo.toml (lowercase)
+        if [ -f cargo.toml ]; then
+          echo "Found cargo.toml (lowercase), renaming to Cargo.toml"
+          mv cargo.toml Cargo.toml
+        fi
+        
+        # Verify we have the right file
+        if [ -f Cargo.toml ]; then
+          echo "✅ Cargo.toml ready for build"
+          head -5 Cargo.toml
+        else
+          echo "❌ Still no Cargo.toml file!"
+          exit 1
+        fi
 
     - name: Build WASM
       run: |
