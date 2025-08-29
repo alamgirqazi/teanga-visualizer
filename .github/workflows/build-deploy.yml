@@ -32,7 +32,7 @@ jobs:
 
     - name: Clone main teanga.rs repo
       run: |
-        git clone https://github.com/alamgirqazi/teanga.rs.git teanga-source
+        git clone https://github.com/teangaNLP/teanga.rs.git teanga-source
         
     - name: Setup Rust
       uses: actions-rs/toolchain@v1
